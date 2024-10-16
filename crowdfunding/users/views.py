@@ -5,13 +5,18 @@ from django.shortcuts import render
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from .models import CustomUser
 from .serializers import CustomUserSerializer
+from .permissions import IsOwnerOrSuperUser, IsSuperUser
 
 class CustomUserList(APIView):
+    #Only SuperUsers can view the list of all users
+    permission_classes = [
+        permissions.IsAuthenticated, IsSuperUser
+    ]
     def get(self, request):
         users = CustomUser.objects.all()
         serializer = CustomUserSerializer(users, many=True)
@@ -30,6 +35,10 @@ class CustomUserList(APIView):
         )
     
 class CustomUserDetail(APIView):
+    #Only User themselves and SuperUser has permission to view User Detail
+    permission_classes = [
+        permissions.IsAuthenticated, IsOwnerOrSuperUser
+    ]
     def get_object(self, pk):
         try:
             return CustomUser.objects.get(pk=pk)
@@ -39,7 +48,28 @@ class CustomUserDetail(APIView):
         user = self.get_object(pk)
         serializer = CustomUserSerializer(user)
         return Response(serializer.data)
-    
+    def put(self, request, pk):
+        self.check_permissions(request)
+        user = self.get_object(pk)
+        serializer = CustomUserSerializer(
+            instance=user,
+            data=request.data,
+            partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    def delete(self, request, pk):
+        self.check_permissions(request)
+        user = self.get_object(pk)
+        user.delete()
+        return Response({"200: User deleted successfully"})
+
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(
