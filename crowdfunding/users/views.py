@@ -6,6 +6,7 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
+from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from .models import CustomUser
@@ -13,15 +14,21 @@ from .serializers import CustomUserSerializer
 from .permissions import IsOwnerOrSuperUser, IsSuperUser
 
 class CustomUserList(APIView):
-    #Only SuperUsers can view the list of all users
-    permission_classes = [
+    #Defines permissions as allow any for POST method to create new user.  GET is superuser only.
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [AllowAny()]
+        return [
         permissions.IsAuthenticated, IsSuperUser
     ]
+
     def get(self, request):
         users = CustomUser.objects.all()
         serializer = CustomUserSerializer(users, many=True)
         return Response(serializer.data)
+    
     def post(self, request):
+        self.permission_classes = [AllowAny] #Overrides above permissions and allows anybody to create a new user to prevent permission blocking
         serializer = CustomUserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -44,12 +51,15 @@ class CustomUserDetail(APIView):
             return CustomUser.objects.get(pk=pk)
         except CustomUser.DoesNotExist:
             raise Http404
+    
     def get(self, request, pk):
         user = self.get_object(pk)
+        self.check_object_permissions(request, user)
         serializer = CustomUserSerializer(user)
         return Response(serializer.data)
+    
     def put(self, request, pk):
-        self.check_permissions(request)
+        self.check_permissions(request, user) #Checks if the User has permission to edit through PUT method
         user = self.get_object(pk)
         serializer = CustomUserSerializer(
             instance=user,
