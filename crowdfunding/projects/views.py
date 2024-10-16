@@ -64,6 +64,15 @@ class ProjectDetail(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+    def delete(self, request, pk):
+        project = self.get_object(pk)
+        #Only Super Users can delete
+        if request.user.is_superuser:
+            project.delete()
+            return Response({"200: Project deleted successfully"})
+        else:
+            return Response({"403: Forbidden.  You are not authorised to delete this Project"})
+
 
 class PledgeList(APIView):
     def get(self, request):
@@ -109,4 +118,12 @@ class PledgeDetail(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+    def delete(self, request, pk):
+        pledge = self.get_object(pk)
+        #Only Super Users can delete
+        if request.user.is_superuser:
+            pledge.delete()
+            return Response({"200: Pledge deleted successfully"})
+        else:
+            return Response({"403: Forbidden.  You are not authorised to delete this Pledge"})
 
