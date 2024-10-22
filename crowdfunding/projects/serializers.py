@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.apps import apps
 
 class PledgeSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = apps.get_model('projects.Pledge')
         fields = '__all__'
@@ -12,8 +13,6 @@ class PledgeSerializer(serializers.ModelSerializer):
         instance.anonymous = validated_data.get('anonymous', instance.anonymous)
         instance.project = validated_data.get('project', instance.project)
         instance.supporter = validated_data.get('supporter', instance.supporter)
-        ###To create "is_deleted" for soft deletion method###
-        #instance.is_deleted = validated_data.get('is_deleted', instance.pledge)
         instance.save()
         return instance
     def to_representation(self, instance):
@@ -44,7 +43,5 @@ class ProjectDetailSerializer(ProjectSerializer):
         instance.is_open = validated_data.get('is_open', instance.is_open)
         instance.date_created = validated_data.get('date_created', instance.date_created)
         instance.owner = validated_data.get('owner', instance.owner)
-        ###To create "is_deleted" for soft deletion method###
-        #instance.isdeleted = validated_data.get('is_deleted', instance.pledge)
         instance.save()
         return instance

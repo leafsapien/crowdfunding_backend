@@ -43,7 +43,7 @@ class ProjectDetail(APIView):
             self.check_object_permissions(self.request, project)
             return project
         except Project.DoesNotExist:
-            raise Http404
+            return Response({"404": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
     
     def get(self, request, pk):
         project = self.get_object(pk)
@@ -70,9 +70,9 @@ class ProjectDetail(APIView):
         #Only Super Users can delete
         if request.user.is_superuser:
             project.delete()
-            return Response({"200: Project deleted successfully"})
+            return Response({"200: Project deleted successfully"}, status=status.HTTP_200_OK)
         else:
-            return Response({"403: Forbidden.  You are not authorised to delete this Project"})
+            return Response({"403: Forbidden.  You are not authorised to delete this Project"}, status=status.HTTP_403_FORBIDDEN)
 
 class PledgeSerializer(serializers.ModelSerializer):
     supporter = serializers.SerializerMethodField() #Uses a method to customise the supporter field
@@ -100,7 +100,7 @@ class PledgeList(APIView):
         if request.user.is_superuser:
             return Response(serializer.data)
         else:
-            return Response({"403: Forbidden.  You are not authorised to view the entire Pledge List."})
+            return Response({"403: Forbidden.  You are not authorised to view the entire Pledge List."}, status=status.HTTP_403_FORBIDDEN)
         #Returns list of all Pledges only to the Super User
         
     def post(self, request):
@@ -132,7 +132,7 @@ class PledgeDetail(APIView):
             self.check_object_permissions(self.request, pledge)
             return pledge
         except Pledge.DoesNotExist:
-            raise Http404({"404: You don't have permission to view these Pledge details"})
+            raise Http404({"404: This Pledge does not exist"}, status=status.HTTP_404_NOT_FOUND)
     def get(self, request, pk):
         pledge = self.get_object(pk)
         serializer = PledgeSerializer(pledge, context={'request': request}) #This context is required for the method that determines anonymous permissions in the serializers is applicable
@@ -147,14 +147,14 @@ class PledgeDetail(APIView):
         
         return Response(
             serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST({"400: That's not quite right"})
+            status=status.HTTP_400_BAD_REQUEST
         )
     def delete(self, request, pk):
         pledge = self.get_object(pk)
         #Only Super Users can delete
         if request.user.is_superuser:
             pledge.delete()
-            return Response({"200: Pledge deleted successfully"})
+            return Response({"200: Pledge deleted successfully"}, status=status.HTTP_200_OK)
         else:
-            return Response({"403: Forbidden.  You are not authorised to delete this Pledge"})
+            return Response({"403: Forbidden.  You are not authorised to delete this Pledge"}, status=status.HTTP_403_FORBIDDEN)
 

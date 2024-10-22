@@ -50,7 +50,7 @@ class CustomUserDetail(APIView):
         try:
             return CustomUser.objects.get(pk=pk)
         except CustomUser.DoesNotExist:
-            raise Http404
+            return Response({"404: That User does not exist"}, status=status.HTTP_400_BAD_REQUEST)
     
     def get(self, request, pk):
         user = self.get_object(pk)
@@ -77,8 +77,11 @@ class CustomUserDetail(APIView):
     def delete(self, request, pk):
         self.check_permissions(request)
         user = self.get_object(pk)
-        user.delete()
-        return Response({"200: User deleted successfully"})
+        if request.user.is_superuser:
+            user.delete()
+            return Response({"200: User deleted successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"403: Forbidden.  You are not authorised to delete this User"}, status=status.HTTP_403_FORBIDDEN)
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
