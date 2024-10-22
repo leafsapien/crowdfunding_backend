@@ -14,7 +14,7 @@ from .serializers import CustomUserSerializer
 from .permissions import IsOwnerOrSuperUser, IsSuperUser
 
 class CustomUserList(APIView):
-    #Defines permissions as allow any for POST method to create new user.  GET is superuser only.
+    #Defines/overrides permissions as to ensure anybody can create a new user
     def get_permissions(self):
         if self.request.method == 'POST':
             return [AllowAny()]

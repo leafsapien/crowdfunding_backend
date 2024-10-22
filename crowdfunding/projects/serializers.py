@@ -16,6 +16,15 @@ class PledgeSerializer(serializers.ModelSerializer):
         #instance.is_deleted = validated_data.get('is_deleted', instance.pledge)
         instance.save()
         return instance
+    def to_representation(self, instance):
+        #This customises the representation of a Pledge object depending on who is viewing it
+        #This will allow us to hide the User info for anonymous donations
+        data = super().to_representation(instance)
+        request = self.context.get('request') #This obtains the info for WHO is requesting the Pledge Detail
+        if instance.anonymous and request and request.user != instance.supporter and not request.user.is_superuser: 
+            #We are now determining if the requester is the pledge owner or superuser if so they can view
+            data.pop('supporter') #Hides the supporter field
+
 
 class ProjectSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.id')
@@ -34,7 +43,7 @@ class ProjectDetailSerializer(ProjectSerializer):
         instance.image = validated_data.get('image', instance.image)
         instance.is_open = validated_data.get('is_open', instance.is_open)
         instance.date_created = validated_data.get('date_created', instance.date_created)
-        instance.owner = validated_data.owner('owner', instance.owner)
+        instance.owner = validated_data.get('owner', instance.owner)
         ###To create "is_deleted" for soft deletion method###
         #instance.isdeleted = validated_data.get('is_deleted', instance.pledge)
         instance.save()
