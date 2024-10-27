@@ -1,7 +1,7 @@
 # Crowdfunding Back End
 by Anaya Dodge
 
-> [!NOTE] In order to interact with this content using Insomnia, you must first activate your Virtual machine and turn on your Server using the following commands in the terminal:
+> In order to interact with this content using Insomnia, you must first activate your Virtual machine and turn on your Server using the following commands in the terminal:
 > - .venv/Scripts/activate
 > - python manage.py runserver
 
@@ -30,15 +30,20 @@ by Anaya Dodge
 - [x] Implement suitable update/delete functionality, e.g., define if a project owner can update project details.
 - [x] Define permissions, e.g., specify who can delete a pledge.
 - [x] Return relevant status codes for both successful and unsuccessful API requests.
-- [ ] (Front end) Handle failed requests gracefully (e.g., implement a custom 404 page instead of a default error page).
+- [ ] (For the front end functionality in future project) Handle failed requests gracefully (e.g., implement a custom 404 page instead of a default error page).
 - [x] Use Token Authentication, including an endpoint for obtaining a token along with the current user's details.
-- [ ] (Front end) Ensure responsive design for mobile and desktop compatibility.
+- [ ] (For the front end functionality in future project) Ensure responsive design for mobile and desktop compatibility.
 
 ## Planning:
 ### HarveztCirkle
 A crowdfunding platform inspired to uplift the building of community-driven urban gardens and strengthening the spirit of communal sharing.  Our goal is to elevate and support both new and existing urban gardens, whether they be on balconies, rooftops, backyards, or community gardens.  
 
-### Intended Audience/User Stories
+### Intended Audience
+- Community members seeking funding to begin an edible garden with the intention of sharing the excess produce within their local community.
+- Existing and/or established community gardens seeking funding for expansion or new works related to edible produce that is shared communally (not for profit).
+- Community members and/or any persons wanting to contribute financial support towards the creation or upgrading of community gardens for edible purposes.
+
+### User Stories
 **For Users**
 -  As a new visitor I want to sign up and create a personal account so that I can participate in the community.
 -  As a user I want to log in securely so that I can access my account details and manage my contributions.
@@ -97,7 +102,7 @@ A crowdfunding platform inspired to uplift the building of community-driven urba
     - Access Level: Authenticated user owner only, or admin.
     - Purpose: Provides access to user projects, pledges, and profile management.
     - Features:
-        - Links to created projects and list of past pledges (including anonymised pledges).
+        - Links to created projects ("My Projects") and list of past pledges ("My Pledges") (including anonymised pledges).
         - Profile management includes editing email address, contact details and profile picture.  User can not change username.
         - Account deletion request to anonymise their data.  (On the back-end this request will go to the admin to review and prompt deletion/anonymisation of content so as to not affect any open projects/relevant pledges)
 
@@ -105,35 +110,31 @@ A crowdfunding platform inspired to uplift the building of community-driven urba
     - Access Level: Display for any 404 errors.
     - Purpose: Provides a user-friendly message for not found errors.
 
-### API Specifications
+## API Specifications
 
-| URL               | HTTP Method | Purpose                                                       | Request Body                                                                                          | Success Response Code | Authentication/Authorisation             | Complete |
-|-------------------|-------------|---------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|-----------------------|------------------------------------------|-----------|
-| projects/         | GET         | Returns all projects                                         | N/A                                                                                                   | 200                   | None                                     | [x]       |
-| projects/         | POST        | Creates a new project                                        | title: string, description: string, goal: int, image: url, is_open: bool, date_created: UTC, owner: FK | 201                   | Bearer Token for User                    | [x]       |
-| projects/<int:pk>/| GET         | Returns project with INT ID                                  | Project all details                                                                                   | 200                   | None                                     | [x]       |
-| projects/<int:pk>/| PUT         | When new Project created, updates project with INT ID        | Project INT ID                                                                                        | 200                   | Bearer Token for User & be the Project Owner | [x]   |
-| projects/<int:pk>/| PUT         | Edits an existing Project with INT ID                        | Relevant fields to be updated                                                                         | 200                   | Bearer Token for User & be the Project Owner | [x]   |
-| projects/<int:pk>/| DELETE      | Permanent cascade deletion of project and all Pledges with INT ID | N/A                                                                                               | 202                   | Admin ONLY                                | [x]       |
-| pledges/          | GET         | Returns all pledges                                          | N/A                                                                                                   | 200                   | Bearer Token                              | [x]       |
-| pledges/          | GET         | Returns all pledges                                          | 403 Forbidden                                                                                         | 403                   | None                                     | [x]       |
-| pledges/          | POST        | Creates new pledge                                           | Pledge object                                                                                         | 201                   | Bearer Token for User                    | [x]       |
-| pledges/<int:pk>/ | GET         | Returns Pledge with INT ID                                   | Pledge object                                                                                         | 200                   | Bearer Token for User & be the Pledge Owner | [x]   |
-| pledges/<int:pk>/ | PUT         | When new Pledge created, assigns project with INT ID         | Pledge INT ID only                                                                                    | 200                   | Bearer Token for User & be the Pledge Owner | [x]   |
-| pledges/<int:pk>/ | PUT         | Edits an existing Pledge with INT ID                         | Relevant fields to be updated                                                                         | 200                   | Bearer Token for User & be the Pledge Owner | [x]   |
-| pledges/<int:pk>/ | DELETE      | Permanent cascade deletion of project and all Pledges with INT ID | N/A                                                                                               | 202                   | Admin ONLY                                | [x]       |
-| users/            | POST        | Creates new User                                             | User object                                                                                           | 201                   | Unique Username and Email address        | [x]       |
-| users/            | GET         | Returns list of all Users for Dev Queries                    | N/A                                                                                                   | 200                   | None                                     | [x]       |
-| users/<int:pk>/   | GET         | Returns User details for INT ID                              | User object                                                                                           | 200                   | Bearer Token for User                    | [x]       |
-| users/<int:pk>/   | GET         | Returns User details for INT ID                              | 403 forbidden                                                                                         | 403                   | None                                     | [x]       |
-| users/<int:pk>/   | PUT         | When new User created, updates User with INT ID              | User INT ID only                                                                                      | 200                   | Bearer Token for User                    | [x]       |
-| users/<int:pk>/   | PUT         | Edits User details with INT ID                               | User all fields except Username                                                                       | 200                   | Bearer Token for User                    | [x]       |
-| users/<int:pk>/   | DELETE      | Permanent cascade deletion of project and all Pledges with INT ID | N/A                                                                                               | 202                   | Admin ONLY                                | [x]       |
-| /api-token-auth/  | POST        | Creates a JWT for User                                       | Auth Token                                                                                            | 201                   | Provide correct username and password    | [x]       |
+| URL                | HTTP Method | Purpose                                                            | Request Body                                                                                          | Success Response Code | Authentication/Authorisation           | Complete |
+|--------------------|-------------|--------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|-----------------------|----------------------------------------|-----------|
+| projects/          | GET         | Returns all projects                                               | N/A                                                                                                   | 200                   | None                                   | [x]       |
+| projects/          | POST        | Creates a new project                                              | title: string, description: string, goal: int, image: url, is_open: bool, date_created: UTC, owner: FK | 201                   | Bearer Token for User                  | [x]       |
+| projects/<int:pk>/ | GET         | Returns project with INT ID                                        | N/A                                                                                                   | 200                   | None                                   | [x]       |
+| projects/<int:pk>/ | PUT         | Edits an existing Project with INT ID, e.g., Closing Project       | project id: int, & any details that require updating.                                                 | 200                   | Bearer Token for User & be Project Owner | [x]   |
+| projects/<int:pk>/ | DELETE      | Permanent cascade deletion of project and all associated pledges   | N/A                                                                                                   | 202                   | Admin ONLY                              | [x]       |
+| pledges/           | GET         | Returns all pledges                                                | N/A                                                                                                   | 200                   | Admin ONLY                              | [x]       |
+| pledges/           | POST        | Creates a new pledge                                               | Amount: int, comment: string, anonymous: boolean, project: pk, supporter: fk                          | 201                   | Bearer Token for User                  | [x]       |
+| pledges/<int:pk>/  | GET         | Returns pledge with INT ID                                         | N/A                                                                                                   | 200                   | Bearer Token for User & be Pledge Owner | [x]   |
+| pledges/<int:pk>/  | PUT         | Edits an existing pledge with INT ID                               | Pledge id: int, & any details that require updating.                                                  | 200                   | Bearer Token for User & be Pledge Owner | [x]   |
+| pledges/<int:pk>/  | DELETE      | Permanent deletion of pledge with INT ID                           | N/A                                                                                                   | 202                   | Admin ONLY                              | [x]       |
+| users/             | POST        | Creates a new user                                                 | username: string, email: email, password: string, first_name: string, last_name: string               | 201                   | Unique Username and Email address      | [x]       |
+| users/             | GET         | Returns list of all users for dev queries                          | N/A                                                                                                   | 200                   | Admin ONLY                              | [x]       |
+| users/<int:pk>/    | GET         | Returns user details for INT ID                                    | N/A                                                                                                   | 200                   | Bearer Token for User                  | [x]       |
+| users/<int:pk>/    | PUT         | Edits user details with INT ID                                     | User id: int, & any details that require updating (Username excluded)                                 | 200                   | Bearer Token for User                  | [x]       |
+| users/<int:pk>/    | DELETE      | Permanent deletion of user and associated projects/pledges         | N/A                                                                                                   | 202                   | Admin ONLY                              | [x]       |
+| /api-token-auth/   | POST        | Creates a JWT for User                                             | N/A                                                                                                   | 201                   | Correct username and password          | [x]       |
 
-### Insomnia Testing Specifications
 
-In addition to the base Project Specifications, I have included my custom made Testing Specifications as follows.
+## Insomnia Testing Specifications
+
+> In addition to meeting the base Project requirements, I have developed comprehensive Testing Specifications to be used in Insomnia as follows.
 
 | Filter Type | Endpoint                | Action                                                                                  | Expected Result          | Success |
 |-------------|--------------------------|-----------------------------------------------------------------------------------------|--------------------------|---------|
@@ -187,22 +188,56 @@ In addition to the base Project Specifications, I have included my custom made T
 
 **GET Method**
 
+![GET Method screen capture](/crowdfunding/img/getmethod.gif)
+
 **POST Method**
 
-**Token Return (aka User Authentication)**
+![POST Method screen capture](/crowdfunding/img/postmethod.gif)
 
-### Step by step instructions on how to create a new user and new project using Insomnia
+**Token Return (aka User Authentication)**
+> Note: This Test User is now deleted, so the Token shown is no longer valid.
+
+![POST Token Authentication Method screen capture](/crowdfunding/img/apitokenmethod.gif)
+
+### How to create a new user and new project using Insomnia
 
 **Create New User**
+1. Create a new HTTP Method: POST
+2. Paste the URL: https://harveztcirkle-ec4dcb75e485.herokuapp.com/users/
+3. Paste and replace the relevant content in the body: (JSON)
+
+```
+{
+	"username": "<string>",
+	"email": "<email>",
+	"password": "<string>",
+	"first_name": "<string>",
+	"last_name": "<string>"
+}
+```
+> Note: The username and email address must be unique.
 
 **Create New Project**
+1. Create a new HTTP Method: POST
+2. Paste the URL: https://harveztcirkle-ec4dcb75e485.herokuapp.com/projects/
+3. Paste and replace the "..." content in the body: (JSON)
 
+```
+{
+	"title": "<string>",
+	"description": "<varchar>",
+	"goal": <int>,
+	"image": "<link>",
+	"is_open": true,
+    "owner_id": <int>
+}
+```
 
 ## Database Schema (Entity Relationship Model)
 
 Made using DB Diagram - [link](https://dbdiagram.io/d/Crowdfunding-Backend-ERM-671b6bdc97a66db9a340b793)
 
-[ERM Database Schema](/Crowdfunding%20Backend%20ERM.png)
+![ERM Database Schema](/crowdfunding/img/db_erm.png)
 
 ### Deployed Project Link
-**Note: this link will only work inside Insomnia** -> [link](https://harveztcirkle-ec4dcb75e485.herokuapp.com/)
+**Note: this will only work inside Insomnia** -> [link](https://harveztcirkle-ec4dcb75e485.herokuapp.com/)

@@ -28,6 +28,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
         if CustomUser.objects.filter(email=value).exists():
             raise serializers.ValidationError("That email address already exists in our system.  Please log in")
         return value
+#Checks that the username is unique, otherwise prompted to choose a different one
+    def validate_username(self, value):
+        if CustomUser.objects.filter(username=value).exists():
+            raise serializers.ValidationError("That username is taken.  Please try another")
+        return value
 
     def create(self, validated_data):
         return CustomUser.objects.create_user(**validated_data)
