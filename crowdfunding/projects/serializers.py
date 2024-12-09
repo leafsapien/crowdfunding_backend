@@ -15,15 +15,6 @@ class PledgeSerializer(serializers.ModelSerializer):
         instance.supporter = validated_data.get('supporter', instance.supporter)
         instance.save()
         return instance
-    def to_representation(self, instance):
-        #This customises the representation of a Pledge object depending on who is viewing it
-        #This will allow us to hide the User info for anonymous donations
-        data = super().to_representation(instance)
-        request = self.context.get('request') #This obtains the info for WHO is requesting the Pledge Detail
-        if instance.anonymous and request and request.user != instance.supporter and not request.user.is_superuser: 
-            #We are now determining if the requester is the pledge owner or superuser if so they can view
-            data.pop('supporter') #Hides the supporter field
-
 
 class ProjectSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.id')
