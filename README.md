@@ -2,8 +2,8 @@
 by Anaya Dodge
 
 > In order to interact with this content using Insomnia, you must first activate your Virtual machine and turn on your Server using the following commands in the terminal:
-> - .venv/Scripts/activate
-> - python manage.py runserver
+> - ". venv/Scripts/activate" (when in same folder location at /venv/)
+> - "python manage.py runserver" (when in same folder location as manage.py)
 
 ## Project Requirements
 - [x] (1/2 done - Front end site coming next) Be separated into two distinct projects: an API built using the Django Rest Framework and a website built using React.
