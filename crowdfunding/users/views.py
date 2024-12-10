@@ -10,6 +10,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from .models import CustomUser
+from projects.models import Project, Pledge
 from .serializers import CustomUserSerializer
 from .permissions import IsOwnerOrSuperUser, IsSuperUser
 
@@ -97,4 +98,45 @@ class CustomAuthToken(ObtainAuthToken):
             'token': token.key,
             'user_id': user.id,
             'email': user.email
+        })
+
+# Custom GET permissions for the "My Details" page on front end
+# This will pull all projects/pledges owned by the user
+class MeDetail(APIView):
+    permissions_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        # Fetches projects and pledges related to the matching user/owner/support ID
+        projects = Project.objects.filter(owner=user)
+        pledges=Pledge.objects.filter(supporter=user)
+        project_data = [
+            {
+                "id": project.id,
+                "title": project.title,
+                "description": project.description,
+                "goal": project.goal,
+                "is_open": project.is_open,
+                "date_created": project.date_created,
+            }
+            for project in projects
+        ]
+
+        pledge_data = [
+            {
+                "id": pledge.id,
+                "amount": pledge.amount,
+                "anonymous": pledge.anonymous,
+                "comment": pledge.comment,
+                "project": {"id": pledge.project.id, "title": pledge.project.title},
+            }
+            for pledge in pledges
+        ]
+
+        return Response({
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "projects": project_data,
+            "pledges": pledge_data,
         })
