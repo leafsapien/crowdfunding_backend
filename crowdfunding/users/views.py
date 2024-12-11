@@ -47,11 +47,11 @@ class CustomUserDetail(APIView):
     permission_classes = [
         permissions.IsAuthenticated, IsOwnerOrSuperUser
     ]
-    def get_object(self, pk):
-        try:
-            return CustomUser.objects.get(pk=pk)
-        except CustomUser.DoesNotExist:
-            return Response({"404: That User does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+    # def get_object(self, pk):
+    #     try:
+    #         return CustomUser.objects.get(pk=pk)
+    #     except CustomUser.DoesNotExist:
+    #         return Response({"404: That User does not exist"}, status=status.HTTP_400_BAD_REQUEST)
     
     def get(self, request, pk):
         user = self.get_object(pk)
