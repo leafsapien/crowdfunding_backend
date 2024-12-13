@@ -47,20 +47,20 @@ class CustomUserDetail(APIView):
     permission_classes = [
         permissions.IsAuthenticated, IsOwnerOrSuperUser
     ]
-    # def get_object(self, pk):
-    #     try:
-    #         return CustomUser.objects.get(pk=pk)
-    #     except CustomUser.DoesNotExist:
-    #         return Response({"404: That User does not exist"}, status=status.HTTP_400_BAD_REQUEST)
-    
+    def get_object(self, pk):
+        try:
+            user = CustomUser.objects.get(pk=pk)
+            self.check_object_permissions(self.request, user)
+            return user
+        except CustomUser.DoesNotExist:
+            return Http404("404: That User does not exist")
+        
     def get(self, request, pk):
         user = self.get_object(pk)
-        self.check_object_permissions(request, user)
         serializer = CustomUserSerializer(user)
         return Response(serializer.data)
     
     def put(self, request, pk):
-        self.check_permissions(request, user) #Checks if the User has permission to edit through PUT method
         user = self.get_object(pk)
         serializer = CustomUserSerializer(
             instance=user,
@@ -75,6 +75,7 @@ class CustomUserDetail(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+    
     def delete(self, request, pk):
         self.check_permissions(request)
         user = self.get_object(pk)
