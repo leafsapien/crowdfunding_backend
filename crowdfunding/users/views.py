@@ -98,7 +98,8 @@ class CustomAuthToken(ObtainAuthToken):
         return Response({
             'token': token.key,
             'user_id': user.id,
-            'email': user.email
+            'email': user.email,
+            'is_superuser': user.is_superuser
         })
 
 # Custom GET permissions for the "My Details" page on front end
@@ -140,6 +141,7 @@ class MeDetail(APIView):
             "first_name": user.first_name,
             "last_name": user.last_name,
             "email": user.email,
+            "is_superuser": user.is_superuser,
             "projects": project_data,
             "pledges": pledge_data,
         })
