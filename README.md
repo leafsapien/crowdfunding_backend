@@ -1,12 +1,16 @@
 # Crowdfunding Back End
 by Anaya Dodge
 
+Deployed front end project link: <https://harveztcirkle.netlify.app/>
+
 > In order to interact with this content using Insomnia, you must first activate your Virtual machine and turn on your Server using the following commands in the terminal:
 > - ". venv/Scripts/activate" (when in same folder location at /venv/)
 > - "python manage.py runserver" (when in same folder location as manage.py)
 
+
+
 ## Project Requirements
-- [x] (1/2 done - Front end site coming next) Be separated into two distinct projects: an API built using the Django Rest Framework and a website built using React.
+- [x] Be separated into two distinct projects: an API built using the Django Rest Framework and a website built using React.
 - [x] Have a unique and creative project name (bonus points for puns and missing vowels!).
 - [x] Define a clear target audience for the platform.
 - [x] Implement user accounts with the following attributes:
@@ -30,9 +34,9 @@ by Anaya Dodge
 - [x] Implement suitable update/delete functionality, e.g., define if a project owner can update project details.
 - [x] Define permissions, e.g., specify who can delete a pledge.
 - [x] Return relevant status codes for both successful and unsuccessful API requests.
-- [ ] (For the front end functionality in future project) Handle failed requests gracefully (e.g., implement a custom 404 page instead of a default error page).
+- [x] Handle failed requests gracefully (e.g., implement a custom 404 page instead of a default error page).
 - [x] Use Token Authentication, including an endpoint for obtaining a token along with the current user's details.
-- [ ] (For the front end functionality in future project) Ensure responsive design for mobile and desktop compatibility.
+- [x] Ensure responsive design for mobile and desktop compatibility.
 
 ## Planning:
 ### HarveztCirkle
